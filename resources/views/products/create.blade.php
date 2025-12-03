@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <h2>Add Product</h2>
 
 <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">

@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class MetalType extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'purity', 'color'];
+
+    public function jewelleryItems()
+    {
+        return $this->hasMany(JewelleryItem::class);
+    }
 }

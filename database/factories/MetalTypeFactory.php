@@ -4,20 +4,16 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MetalType>
- */
 class MetalTypeFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function definition()
     {
+        $metals = ['Gold', 'Silver', 'Rose Gold', 'Platinum'];
+        $m = $this->faker->randomElement($metals);
         return [
-            //
+            'name' => $m,
+            'purity' => $this->faker->randomElement(['18k','22k','24k', null]),
+            'color' => strtolower(str_replace(' ', '-', $m)),
         ];
     }
 }

@@ -10,13 +10,17 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+    public function run()
     {
-        // \App\Models\User::factory(10)->create();
+         \App\Models\Category::factory(5)->create();
+         \App\Models\MetalType::factory()->createMany([
+            ['name'=>'Gold','purity'=>'18k','color'=>'gold'],
+            ['name'=>'Silver','purity'=>null,'color'=>'silver'],
+           ['name'=>'Rose Gold','purity'=>'18k','color'=>'rose-gold'],
+    ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+    // create jewellery items using existing categories & metal types
+    \App\Models\JewelleryItem::factory(20)->create();
     }
+
 }

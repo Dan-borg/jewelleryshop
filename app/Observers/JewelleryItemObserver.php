@@ -3,46 +3,21 @@
 namespace App\Observers;
 
 use App\Models\JewelleryItem;
+use Illuminate\Support\Str;
 
 class JewelleryItemObserver
 {
-    /**
-     * Handle the JewelleryItem "created" event.
-     */
-    public function created(JewelleryItem $jewelleryItem): void
+    public function creating(JewelleryItem $item)
     {
-        //
-    }
-
-    /**
-     * Handle the JewelleryItem "updated" event.
-     */
-    public function updated(JewelleryItem $jewelleryItem): void
-    {
-        //
-    }
-
-    /**
-     * Handle the JewelleryItem "deleted" event.
-     */
-    public function deleted(JewelleryItem $jewelleryItem): void
-    {
-        //
-    }
-
-    /**
-     * Handle the JewelleryItem "restored" event.
-     */
-    public function restored(JewelleryItem $jewelleryItem): void
-    {
-        //
-    }
-
-    /**
-     * Handle the JewelleryItem "force deleted" event.
-     */
-    public function forceDeleted(JewelleryItem $jewelleryItem): void
-    {
-        //
+        if (empty($item->slug)) {
+            $base = Str::slug($item->name);
+            $slug = $base;
+            $i = 1;
+            while (JewelleryItem::where('slug', $slug)->exists()) {
+                $i++;
+                $slug = $base . '-' . $i;
+            }
+            $item->slug = $slug;
+        }
     }
 }

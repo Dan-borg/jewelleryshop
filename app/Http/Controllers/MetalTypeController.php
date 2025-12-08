@@ -61,4 +61,21 @@ class MetalTypeController extends Controller
     {
         //
     }
+
+    public function ajaxStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
+
+        $metal = \App\Models\MetalType::create([
+            'name' => $request->name
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'metal' => $metal
+        ]);
+    }
+
 }

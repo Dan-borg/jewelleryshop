@@ -6,26 +6,12 @@ use App\Http\Controllers\ProductController;
 use App\Models\Product;
 use App\Models\Category;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// Default homepage redirects to Shop
 Route::get('/', function () {
-    return redirect()->route('shop');
-})->name('home');
-
-
-// MAIN SHOP PAGE (search + filter + sort)
-Route::get('/shop', function () {
-
     $search = request('search');
     $filterCategory = request('category');
     $sort = request('sort');
 
-    $products = Product::with('category', 'collection');
+    $products = Product::with('category');
 
     if ($search) {
         $products->where('name', 'like', '%' . $search . '%');
@@ -35,29 +21,41 @@ Route::get('/shop', function () {
         $products->where('category_id', $filterCategory);
     }
 
-    // Sorting logic
-    if ($sort == 'price_low_high') {
-        $products->orderBy('price', 'asc');
-    } elseif ($sort == 'price_high_low') {
-        $products->orderBy('price', 'desc');
-    } elseif ($sort == 'name_az') {
-        $products->orderBy('name', 'asc');
-    } elseif ($sort == 'name_za') {
-        $products->orderBy('name', 'desc');
+    switch ($sort) {
+        case 'price_asc':
+            $products->orderBy('price', 'asc');
+            break;
+        case 'price_desc':
+            $products->orderBy('price', 'desc');
+            break;
+        case 'name_asc':
+            $products->orderBy('name', 'asc');
+            break;
+        case 'name_desc':
+            $products->orderBy('name', 'desc');
+            break;
+        default:
+            $products->orderBy('created_at', 'desc');
+            break;
     }
 
     $products = $products->get();
     $categories = Category::all();
 
     return view('shop', compact('products', 'categories'));
-})->name('shop');
+});
 
-
-// PRODUCT DETAIL PAGE
-Route::get('/product/{id}', [ProductController::class, 'show'])
-    ->name('products.show');
-
-
-// CRUD ROUTES
+// Category CRUD
 Route::resource('categories', CategoryController::class);
+
+// Product CRUD
 Route::resource('products', ProductController::class);
+
+// ⭐ Add to Cart (customer side)
+Route::post('/products/{product}/add-to-cart', [ProductController::class, 'addToCart'])
+    ->name('products.addToCart');
+
+Route::post('/metaltypes/ajax-create', [App\Http\Controllers\MetalTypeController::class, 'ajaxStore'])
+    ->name('metaltypes.store.ajax');
+
+    

@@ -9,10 +9,12 @@ class MetalType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'purity', 'color'];
+    protected $fillable = [
+        'name'
+    ];
 
-    public function jewelleryItems()
+    public function products()
     {
-        return $this->hasMany(JewelleryItem::class);
+        return $this->hasMany(Product::class);
     }
 }

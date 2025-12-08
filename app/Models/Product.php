@@ -17,11 +17,11 @@ class Product extends Model
         'image',
         'category_id',
         'collection_id',
+        'metal_type_id',
         'is_engraveable',
         'engraving_text',
-        'engraving_font',
+        'engraving_font'
     ];
-
 
     public function category()
     {
@@ -31,5 +31,10 @@ class Product extends Model
     public function collection()
     {
         return $this->belongsTo(Collection::class);
+    }
+
+    public function metalType()
+    {
+        return $this->belongsTo(MetalType::class);
     }
 }

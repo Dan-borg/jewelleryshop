@@ -1,100 +1,160 @@
 @extends('layouts.app')
 
 @section('content')
-<h2>Edit Product</h2>
+<h2 class="mb-4">Edit Product</h2>
 
 <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
+    {{-- Name --}}
     <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" name="name" value="{{ $product->name }}" class="form-control" required>
+        <input
+            type="text"
+            name="name"
+            class="form-control"
+            value="{{ old('name', $product->name) }}"
+            required
+        >
     </div>
 
+    {{-- Description --}}
     <div class="mb-3">
         <label class="form-label">Description</label>
-        <textarea name="description" class="form-control">{{ $product->description }}</textarea>
+        <textarea
+            name="description"
+            class="form-control"
+            rows="3"
+        >{{ old('description', $product->description) }}</textarea>
     </div>
 
+    {{-- Price --}}
     <div class="mb-3">
         <label class="form-label">Price (€)</label>
-        <input type="number" name="price" step="0.01" value="{{ $product->price }}" class="form-control" required>
+        <input
+            type="number"
+            name="price"
+            step="0.01"
+            class="form-control"
+            value="{{ old('price', $product->price) }}"
+            required
+        >
     </div>
 
+    {{-- Stock --}}
     <div class="mb-3">
         <label class="form-label">Stock</label>
-        <input type="number" name="stock" value="{{ $product->stock }}" class="form-control" required>
+        <input
+            type="number"
+            name="stock"
+            class="form-control"
+            value="{{ old('stock', $product->stock) }}"
+            required
+        >
     </div>
 
+    {{-- Category --}}
     <div class="mb-3">
         <label class="form-label">Category</label>
-        <select name="category_id" class="form-control" required>
+        <select name="category_id" class="form-select" required>
+            <option value="">Select a category</option>
             @foreach ($categories as $category)
-                <option value="{{ $category->id }}" 
-                    @if($product->category_id == $category->id) selected @endif>
+                <option value="{{ $category->id }}"
+                    @if (old('category_id', $product->category_id) == $category->id) selected @endif>
                     {{ $category->name }}
                 </option>
             @endforeach
         </select>
     </div>
 
-    {{-- Engraving Option --}}
+    {{-- Collection (existing OR create new) --}}
+    @if (!empty($collections))
     <div class="mb-3">
-        <label class="form-label">Is this engravable?</label>
-        <select name="is_engraveable" id="engraveableToggle" class="form-control">
-            <option value="0" @if(!$product->is_engraveable) selected @endif>No</option>
-            <option value="1" @if($product->is_engraveable) selected @endif>Yes</option>
+        <label class="form-label">Collection (optional)</label>
+        <select name="collection_id" class="form-select">
+            <option value="">None</option>
+            @foreach ($collections as $collection)
+                <option value="{{ $collection->id }}"
+                    @if (old('collection_id', $product->collection_id) == $collection->id) selected @endif>
+                    {{ $collection->name }}
+                </option>
+            @endforeach
         </select>
+        <div class="form-text">
+            Or create a new collection below.
+        </div>
+    </div>
+    @endif
+
+    <div class="mb-3">
+        <label class="form-label">New Collection Name (optional)</label>
+        <input
+            type="text"
+            name="new_collection_name"
+            class="form-control"
+            value="{{ old('new_collection_name') }}"
+            placeholder="e.g. Personalisation, Wedding 2025"
+        >
     </div>
 
-    <div id="engravingFields" style="display: {{ $product->is_engraveable ? 'block' : 'none' }};">
-        <div class="mb-3">
-            <label class="form-label">Engraving Text</label>
-            <input type="text" name="engraving_text" value="{{ $product->engraving_text }}" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Engraving Font</label>
-            <select name="engraving_font" class="form-control">
-                <option value="script" @if($product->engraving_font == 'script') selected @endif>
-                    Elegant Script
+    {{-- Metal Type (existing OR create new) --}}
+    @if (!empty($metalTypes))
+    <div class="mb-3">
+        <label class="form-label">Metal Type (optional)</label>
+        <select name="metal_type_id" class="form-select">
+            <option value="">None</option>
+            @foreach ($metalTypes as $metal)
+                <option value="{{ $metal->id }}"
+                    @if (old('metal_type_id', $product->metal_type_id) == $metal->id) selected @endif>
+                    {{ $metal->name }}
                 </option>
-                <option value="minimal" @if($product->engraving_font == 'minimal') selected @endif>
-                    Minimalist Sans
-                </option>
-            </select>
+            @endforeach
+        </select>
+        <div class="form-text">
+            Or create a new metal type below.
         </div>
+    </div>
+    @endif
 
-        <div class="p-2 border rounded">
-            <p class="mb-1"><strong>Font Preview:</strong></p>
-            <p style="font-family: 'Brush Script MT', cursive; font-size:20px;">
-                Elegant Script Example
-            </p>
-            <p style="font-family: Arial, sans-serif; font-size:18px;">
-                Minimalist Sans Example
-            </p>
+    <div class="mb-3">
+        <label class="form-label">New Metal Type Name (optional)</label>
+        <input
+            type="text"
+            name="new_metal_type_name"
+            class="form-control"
+            value="{{ old('new_metal_type_name') }}"
+            placeholder="e.g. Rose Gold, Sterling Silver"
+        >
+    </div>
+
+    {{-- Engravable toggle --}}
+    <div class="mb-3">
+        <label class="form-label">Is this product engravable?</label>
+        <select name="is_engraveable" class="form-select">
+            <option value="0" @if (old('is_engraveable', $product->is_engraveable) == 0) selected @endif>No</option>
+            <option value="1" @if (old('is_engraveable', $product->is_engraveable) == 1) selected @endif>Yes</option>
+        </select>
+        <div class="form-text">
+            If set to "Yes", customers will later be able to choose engraving options on the product page.
         </div>
     </div>
 
     {{-- Image --}}
-    <div class="mb-3 mt-3">
-        <label class="form-label">Product Image</label>
+    <div class="mb-3">
+        <label class="form-label">Image</label>
         <input type="file" name="image" class="form-control">
+        <div class="form-text">
+            Leave empty to keep the current image.
+        </div>
         @if ($product->image)
-            <img src="{{ asset('storage/'.$product->image) }}" width="80" class="mt-2">
+            <div class="mt-2">
+                <p class="mb-1">Current image:</p>
+                <img src="{{ asset('storage/' . $product->image) }}" alt="" style="max-width: 200px; border-radius: 0.5rem;">
+            </div>
         @endif
     </div>
 
-    <button class="btn btn-primary mt-3">Update Product</button>
+    <button class="btn btn-blush">Update Product</button>
 </form>
-
-{{-- JS TOGGLE --}}
-<script>
-document.getElementById('engraveableToggle').addEventListener('change', function () {
-    document.getElementById('engravingFields').style.display =
-        this.value == "1" ? "block" : "none";
-});
-</script>
-
 @endsection

@@ -2,80 +2,81 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MetalType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class MetalTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $metalTypes = MetalType::all();
+        return view('metal_types.index', compact('metalTypes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('metal_types.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // 1) Basic validation
+        $request->validate([
+            'name'    => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+        ]);
+
+        // 2) External API validation using REST Countries
+        $response = Http::get(
+            'https://restcountries.com/v3.1/name/' . urlencode($request->country),
+            ['fullText' => 'true']
+        );
+
+        $data = $response->json();
+
+        if ($response->failed() || empty($data) || isset($data['status'])) {
+            return back()
+                ->withErrors(['country' => 'Country not recognised. Please enter a valid country name.'])
+                ->withInput();
+        }
+
+        // 3) If API says OK, create the metal type (we only store the name)
+        MetalType::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()
+            ->route('metal-types.index')
+            ->with('success', 'Metal type created successfully (country validated via external API).');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(MetalType $metalType)
     {
-        //
+        return view('metal_types.edit', compact('metalType'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    public function ajaxStore(Request $request)
+    public function update(Request $request, MetalType $metalType)
     {
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
         ]);
 
-        $metal = \App\Models\MetalType::create([
-            'name' => $request->name
+        $metalType->update([
+            'name' => $request->name,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'metal' => $metal
-        ]);
+        return redirect()
+            ->route('metal-types.index')
+            ->with('success', 'Metal type updated.');
     }
 
+    public function destroy(MetalType $metalType)
+    {
+        $metalType->delete();
+
+        return redirect()
+            ->route('metal-types.index')
+            ->with('success', 'Metal type deleted.');
+    }
 }

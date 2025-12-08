@@ -9,9 +9,8 @@ class MetalType extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name'
-    ];
+    // We only store the name in the DB (country is only for validation, not stored)
+    protected $fillable = ['name'];
 
     public function products()
     {

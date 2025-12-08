@@ -74,11 +74,14 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div id="mainNav" class="collapse navbar-collapse justify-content-end">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="/">Shop</a></li>
-                <li class="nav-item"><a class="nav-link" href="/categories">Categories</a></li>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
                 <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="/categories">Categories</a></li>
+                <li class="nav-item"><a class="nav-link" href="/collections">Collections</a></li>
+                <li class="nav-item"><a class="nav-link" href="/metal-types">Metal Types</a></li>
             </ul>
+
         </div>
     </div>
 </nav>

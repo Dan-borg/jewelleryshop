@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MetalTypeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
@@ -58,4 +59,5 @@ Route::post('/products/{product}/add-to-cart', [ProductController::class, 'addTo
 Route::post('/metaltypes/ajax-create', [App\Http\Controllers\MetalTypeController::class, 'ajaxStore'])
     ->name('metaltypes.store.ajax');
 
-    
+Route::resource('metal-types', MetalTypeController::class);
+

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
 
 class ProductController extends Controller
 {
@@ -26,7 +28,10 @@ class ProductController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             'category_id' => 'required',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'is_engraveable' => 'required|boolean',
+            'engraving_text' => 'nullable|string|max:50',
+            'engraving_font' => 'nullable|string'
         ]);
 
         $data = $request->all();
@@ -34,6 +39,20 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
         }
+
+        // External API validation (country-based font validation)
+        if ($request->is_engraveable && $request->engraving_font) {
+
+            // Call REST Countries API
+            $response = Http::get("https://restcountries.com/v3.1/alpha/" . $request->engraving_font);
+
+            if ($response->failed()) {
+                return back()
+                    ->withErrors(['engraving_font' => 'Invalid engraving font code (country code not found).'])
+                    ->withInput();
+            }
+        }
+
 
         Product::create($data);
 
@@ -53,7 +72,10 @@ class ProductController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             'category_id' => 'required',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'is_engraveable' => 'required|boolean',
+            'engraving_text' => 'nullable|string|max:50',
+            'engraving_font' => 'nullable|string'
         ]);
 
         $data = $request->all();
@@ -61,6 +83,20 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
         }
+
+        // External API validation (country-based font validation)
+        if ($request->is_engraveable && $request->engraving_font) {
+
+            // Call REST Countries API
+            $response = Http::get("https://restcountries.com/v3.1/alpha/" . $request->engraving_font);
+
+            if ($response->failed()) {
+                return back()
+                    ->withErrors(['engraving_font' => 'Invalid engraving font code (country code not found).'])
+                    ->withInput();
+            }
+        }
+
 
         $product->update($data);
 

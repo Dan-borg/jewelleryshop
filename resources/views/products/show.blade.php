@@ -27,6 +27,27 @@
 
         <p class="mt-3">{{ $product->description }}</p>
 
+        @if ($product->is_engraveable)
+        <div class="mt-3 p-3 rounded" style="background-color:#F7E7EA;">
+            <h5 class="mb-1">Personalisation</h5>
+            <p class="mb-1"><strong>Engraving Text:</strong> {{ $product->engraving_text }}</p>
+            <p class="mb-0"><strong>Font:</strong>
+                @if ($product->engraving_font == 'script')
+                    <span style="font-family:cursive;">{{ $product->engraving_text }}</span>
+                @elseif ($product->engraving_font == 'elegant')
+                    <span style="font-family: 'Segoe Script', cursive; font-size:1.2rem;">
+                        {{ $product->engraving_text }}
+                    </span>
+                @else
+                    <span style="font-family: sans-serif; font-weight:300;">
+                        {{ $product->engraving_text }}
+                    </span>
+                @endif
+            </p>
+        </div>
+        @endif
+
+
         <a href="/" class="btn btn-secondary mt-3">Back to Shop</a>
     </div>
 </div>

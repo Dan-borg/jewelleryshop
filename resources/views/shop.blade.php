@@ -2,7 +2,7 @@
 
 @section('content')
 
-// HERO SECTION
+{{-- HERO SECTION --}}
 <div class="hero-blush">
     <div class="row align-items-center">
         <div class="col-md-7">
@@ -20,10 +20,10 @@
     </div>
 </div>
 
-// FILTERS + SORT
+{{-- FILTERS + SORT --}}
 <form method="GET" action="/" class="row g-2 mb-4">
 
-    // Search
+    {{-- Search --}}
     <div class="col-md-4">
         <input type="text"
                name="search"
@@ -32,7 +32,7 @@
                placeholder="Search products...">
     </div>
 
-    // Category Filter
+    {{-- Category Filter --}}
     <div class="col-md-4">
         <select name="category" class="form-select">
             <option value="">All Categories</option>
@@ -45,7 +45,7 @@
         </select>
     </div>
 
-    // Sorting
+    {{-- Sorting --}}
     <div class="col-md-3">
         <select name="sort" class="form-select">
             <option value="">Sort by</option>
@@ -56,13 +56,13 @@
         </select>
     </div>
 
-    // Submit
+    {{-- Submit --}}
     <div class="col-md-1 d-grid">
         <button class="btn btn-blush">Go</button>
     </div>
 </form>
 
-// PRODUCT GRID
+{{-- PRODUCT GRID --}}
 <div id="collection-grid" class="row g-4">
     @forelse ($products as $product)
         <div class="col-md-4">
@@ -73,7 +73,7 @@
     @endforelse
 </div>
 
-// BOUT SECTION
+{{-- ABOUT SECTION --}}
 <div class="mt-5 p-4 rounded" style="background-color:#F7E7EA;">
     <h4>About Blush Boutique Jewellery</h4>
     <p class="mb-1">

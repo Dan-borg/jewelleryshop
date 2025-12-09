@@ -13,15 +13,14 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Country of Origin (validated via API)</label>
-            <input type="text" name="country" class="form-control"
-                   value="{{ old('country') }}"
-                   placeholder="e.g. Italy, France, Spain" required>
-            <div class="form-text">
-                Try a wrong value like <strong>Italyyy</strong> to see the validation error,
-                then try <strong>Italy</strong>.
-            </div>
+            <label class="form-label">Country of Origin</label>
+            <input type="text" name="country" class="form-control" placeholder="e.g. Italy" required>
+
+            @error('country')
+                <div class="text-danger small">{{ $message }}</div>
+            @enderror
         </div>
+
 
         <button class="btn btn-blush">Save Metal Type</button>
     </form>

@@ -191,4 +191,59 @@ class ProductController extends Controller
 
         return view('products.show', compact('product'));
     }
+
+    // Show all products (Shop page)
+    public function shop()
+    {
+        $products = Product::with('category', 'collection', 'metalType')->get();
+        $categories = \App\Models\Category::all();
+        $collections = \App\Models\Collection::all();
+
+        return view('shop', compact('products', 'categories', 'collections'));
+    }
+
+    // Add to Cart
+    public function addToCart($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $cart = session()->get('cart', []);
+
+        // If product already in cart
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                'name' => $product->name,
+                'price' => $product->price,
+                'image' => $product->image,
+                'quantity' => 1
+            ];
+        }
+
+        session()->put('cart', $cart);
+
+        return back()->with('success', 'Product added to cart!');
+    }
+
+    // View Cart
+    public function cart()
+    {
+        $cart = session()->get('cart', []);
+        return view('cart.index', compact('cart'));
+    }
+
+    // Remove one item
+    public function removeFromCart($id)
+    {
+        $cart = session()->get('cart', []);
+        
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+        }
+
+        return back()->with('success', 'Item removed from cart.');
+    }
+
 }

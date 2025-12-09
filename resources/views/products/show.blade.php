@@ -16,6 +16,7 @@
 </style>
 
 <div class="row">
+    {{-- PRODUCT IMAGE --}}
     <div class="col-md-6 mb-3">
         @if ($product->image)
             <img src="{{ asset('storage/' . $product->image) }}"
@@ -29,6 +30,7 @@
         @endif
     </div>
 
+    {{-- PRODUCT DETAILS --}}
     <div class="col-md-6">
         <h2>{{ $product->name }}</h2>
 
@@ -37,9 +39,7 @@
         </p>
 
         @if ($product->collection)
-            <p class="text-muted mb-1">
-                Collection: {{ $product->collection->name }}
-            </p>
+            <p class="text-muted mb-1">Collection: {{ $product->collection->name }}</p>
         @endif
 
         @if ($product->stock <= 5)
@@ -54,20 +54,21 @@
 
         <hr>
 
-        {{-- ENGRAVING + ADD TO CART --}}
+        {{-- PERSONALISATION + ADD TO CART --}}
         <h5 class="mb-3">Personalisation</h5>
 
-        @if ($product->is_engraveable)
-            <p class="text-muted">
-                This piece can be engraved to make it uniquely yours.
-            </p>
+        <form method="POST" action="{{ route('cart.add', $product->id) }}">
+            @csrf
 
-            <form method="POST" action="{{ route('products.addToCart', $product->id) }}">
-                @csrf
+            @if ($product->is_engraveable)
+                <p class="text-muted">
+                    This piece can be engraved to make it uniquely yours.
+                </p>
 
-                {{-- Choose if user wants engraving --}}
+                {{-- ASK IF USER WANTS ENGRAVING --}}
                 <div class="mb-3">
                     <label class="form-label d-block">Do you want engraving?</label>
+
                     <div class="form-check form-check-inline">
                         <input class="form-check-input"
                                type="radio"
@@ -77,6 +78,7 @@
                                checked>
                         <label class="form-check-label" for="engrave_no">No</label>
                     </div>
+
                     <div class="form-check form-check-inline">
                         <input class="form-check-input"
                                type="radio"
@@ -87,72 +89,59 @@
                     </div>
                 </div>
 
+                {{-- ENGRAVING FIELDS --}}
                 <div id="engravingFields" style="display:none;">
                     <div class="mb-3">
-                        <label class="form-label">What should we engrave? (max 50 characters)</label>
+                        <label class="form-label">Engraving text (max 50 characters)</label>
                         <input type="text"
                                name="engraving_text"
-                               class="form-control"
                                maxlength="50"
+                               class="form-control"
                                placeholder="e.g. D & D · 2025">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Choose a font style</label>
+                        <label class="form-label">Choose a font</label>
                         <select name="engraving_font" class="form-select">
-                            <option value="">Select font</option>
-                            <option value="script">
-                                Script / Handwriting – <span class="font-script">Blush Boutique</span>
-                            </option>
-                            <option value="elegant">
-                                Elegant Script – <span class="font-elegant">Blush Boutique</span>
-                            </option>
-                            <option value="minimalist">
-                                Minimalist – <span class="font-minimalist">BLUSH BOUTIQUE</span>
-                            </option>
+                            <option value="">Select a font</option>
+                            <option value="script">Script / Handwriting – <span class="font-script">Blush Boutique</span></option>
+                            <option value="elegant">Elegant Script – <span class="font-elegant">Blush Boutique</span></option>
+                            <option value="minimalist">Minimalist – <span class="font-minimalist">BLUSH BOUTIQUE</span></option>
                         </select>
-                        <small class="text-muted">
-                            The preview above gives you an idea of each style.
-                        </small>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-blush mt-2">
-                    Add to Cart
-                </button>
-            </form>
-        @else
-            <p class="text-muted">
-                This product cannot be engraved, but it can still be added to your cart.
-            </p>
-
-            <form method="POST" action="{{ route('products.addToCart', $product->id) }}">
-                @csrf
+            @else
+                {{-- PRODUCT IS NOT ENGRAVEABLE --}}
+                <p class="text-muted">This product cannot be engraved.</p>
                 <input type="hidden" name="engrave" value="no">
-                <button type="submit" class="btn btn-blush">
-                    Add to Cart
-                </button>
-            </form>
-        @endif
+            @endif
+
+            <button type="submit" class="btn btn-blush mt-3">
+                Add to Cart
+            </button>
+        </form>
+
     </div>
 </div>
 
+{{-- JS FOR SHOW/HIDE ENGRAVING FIELDS --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const yesRadio = document.getElementById('engrave_yes');
-    const noRadio = document.getElementById('engrave_no');
-    const fields = document.getElementById('engravingFields');
+document.addEventListener("DOMContentLoaded", function () {
+    const yes = document.getElementById("engrave_yes");
+    const no = document.getElementById("engrave_no");
+    const fields = document.getElementById("engravingFields");
 
-    if (yesRadio && noRadio && fields) {
-        function updateVisibility() {
-            fields.style.display = yesRadio.checked ? 'block' : 'none';
-        }
+    if (!yes || !no || !fields) return;
 
-        yesRadio.addEventListener('change', updateVisibility);
-        noRadio.addEventListener('change', updateVisibility);
-
-        updateVisibility();
+    function toggle() {
+        fields.style.display = yes.checked ? "block" : "none";
     }
+
+    yes.addEventListener("change", toggle);
+    no.addEventListener("change", toggle);
+
+    toggle();
 });
 </script>
 

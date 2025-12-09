@@ -1,63 +1,37 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MetalTypeController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use App\Models\Product;
-use App\Models\Category;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\MetalTypeController;
 
-Route::get('/', function () {
-    $search = request('search');
-    $filterCategory = request('category');
-    $sort = request('sort');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
-    $products = Product::with('category');
+// Home redirects to shop
+Route::get('/', [ProductController::class, 'shop'])->name('shop');
 
-    if ($search) {
-        $products->where('name', 'like', '%' . $search . '%');
-    }
+// SHOP page
+Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
 
-    if ($filterCategory) {
-        $products->where('category_id', $filterCategory);
-    }
-
-    switch ($sort) {
-        case 'price_asc':
-            $products->orderBy('price', 'asc');
-            break;
-        case 'price_desc':
-            $products->orderBy('price', 'desc');
-            break;
-        case 'name_asc':
-            $products->orderBy('name', 'asc');
-            break;
-        case 'name_desc':
-            $products->orderBy('name', 'desc');
-            break;
-        default:
-            $products->orderBy('created_at', 'desc');
-            break;
-    }
-
-    $products = $products->get();
-    $categories = Category::all();
-
-    return view('shop', compact('products', 'categories'));
-});
+// COLLECTIONS
+Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
+Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
 
 // Category CRUD
 Route::resource('categories', CategoryController::class);
 
-// Product CRUD
+// PRODUCTS CRUD
 Route::resource('products', ProductController::class);
 
-// ⭐ Add to Cart (customer side)
-Route::post('/products/{product}/add-to-cart', [ProductController::class, 'addToCart'])
-    ->name('products.addToCart');
-
-Route::post('/metaltypes/ajax-create', [App\Http\Controllers\MetalTypeController::class, 'ajaxStore'])
-    ->name('metaltypes.store.ajax');
-
+// METAL TYPES CRUD
 Route::resource('metal-types', MetalTypeController::class);
 
+// CART
+Route::get('/cart', [ProductController::class, 'cart'])->name('cart');
+Route::post('/cart/add/{id}', [ProductController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');

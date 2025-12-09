@@ -10,9 +10,9 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Show all products (admin list).
-     */
+    
+     // Show all products (admin list).
+     
     public function index()
     {
         $products = Product::with(['category', 'collection', 'metalType'])->get();
@@ -20,9 +20,8 @@ class ProductController extends Controller
         return view('products.index', compact('products'));
     }
 
-    /**
-     * Show create product form.
-     */
+     // Show create product form.
+     
     public function create()
     {
         $categories   = Category::all();
@@ -32,9 +31,8 @@ class ProductController extends Controller
         return view('products.create', compact('categories', 'collections', 'metalTypes'));
     }
 
-    /**
-     * Store a new product.
-     */
+     // Store a new product.
+     
     public function store(Request $request)
     {
         $request->validate([
@@ -61,7 +59,7 @@ class ProductController extends Controller
             'image'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
-        // Handle create-on-the-fly collection
+        // Handle create-on-the-spot collection
         $collectionId = $request->collection_id;
         if ($request->filled('new_collection_name')) {
             $collection = Collection::create([
@@ -70,7 +68,7 @@ class ProductController extends Controller
             $collectionId = $collection->id;
         }
 
-        // Handle create-on-the-fly metal type
+        // Handle create-on-the-spot metal type
         $metalTypeId = $request->metal_type_id;
         if ($request->filled('new_metal_type_name')) {
             $metal = MetalType::create([
@@ -79,7 +77,7 @@ class ProductController extends Controller
             $metalTypeId = $metal->id;
         }
 
-        // Build data array (exclude helper fields)
+        // Build data array
         $data = $request->except(['image', 'new_collection_name', 'new_metal_type_name']);
 
         $data['collection_id']  = $collectionId;
@@ -98,9 +96,8 @@ class ProductController extends Controller
             ->with('success', 'Product added successfully.');
     }
 
-    /**
-     * Show edit form for a product.
-     */
+     // Show edit form for a product.
+     
     public function edit(Product $product)
     {
         $categories   = Category::all();
@@ -110,9 +107,8 @@ class ProductController extends Controller
         return view('products.edit', compact('product', 'categories', 'collections', 'metalTypes'));
     }
 
-    /**
-     * Update existing product.
-     */
+     // Update existing product.
+     
     public function update(Request $request, Product $product)
     {
         $request->validate([
@@ -135,7 +131,7 @@ class ProductController extends Controller
             'image'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
-        // Handle create-on-the-fly collection
+        // Handle create-on-the-spot collection
         $collectionId = $request->collection_id;
         if ($request->filled('new_collection_name')) {
             $collection = Collection::create([
@@ -144,7 +140,7 @@ class ProductController extends Controller
             $collectionId = $collection->id;
         }
 
-        // Handle create-on-the-fly metal type
+        // Handle create-on-the-spot metal type
         $metalTypeId = $request->metal_type_id;
         if ($request->filled('new_metal_type_name')) {
             $metal = MetalType::create([
@@ -170,9 +166,8 @@ class ProductController extends Controller
             ->with('success', 'Product updated successfully.');
     }
 
-    /**
-     * Delete product.
-     */
+     // Delete product.
+     
     public function destroy(Product $product)
     {
         $product->delete();
@@ -182,9 +177,8 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully.');
     }
 
-    /**
-     * Public product details page.
-     */
+     // Public product details page.
+     
     public function show($id)
     {
         $product = Product::with(['category', 'collection', 'metalType'])->findOrFail($id);

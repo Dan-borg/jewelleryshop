@@ -5,33 +5,67 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\MetalTypeController;
+use App\Http\Controllers\CartController;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Collection;
+use App\Models\MetalType;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
-// Home redirects to shop
-Route::get('/', [ProductController::class, 'shop'])->name('shop');
+// HOME
+Route::get('/', [ProductController::class, 'shop'])->name('home');
 
-// SHOP page
-Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
+// SHOP PAGE (search, filter, sort)
+Route::get('/shop', function () {
+    $search = request('search');
+    $filterCategory = request('category');
+    $sort = request('sort');
 
-// COLLECTIONS
+    $products = Product::query()->with(['category', 'collection', 'metalType']);
+
+    // Search filter
+    if ($search) {
+        $products->where('name', 'LIKE', "%$search%");
+    }
+
+    // Category filter
+    if ($filterCategory) {
+        $products->where('category_id', $filterCategory);
+    }
+
+    // Sorting
+    if ($sort == 'price_asc') {
+        $products->orderBy('price', 'asc');
+    } elseif ($sort == 'price_desc') {
+        $products->orderBy('price', 'desc');
+    }
+
+    return view('shop', [
+        'products'    => $products->get(),
+        'categories'  => Category::all(),
+        'collections' => Collection::all(),
+        'selectedCategory' => $filterCategory,
+        'selectedSort'     => $sort,
+        'searchTerm'       => $search
+    ]);
+});
+
+// COLLECTIONS PAGE
 Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
-Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
+Route::get('/collections/{collection}', [CollectionController::class, 'show'])->name('collections.show');
 
-// Category CRUD
-Route::resource('categories', CategoryController::class);
-
-// PRODUCTS CRUD
+// PRODUCTS CRUD + show
 Route::resource('products', ProductController::class);
+
+// CART
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+
+// CATEGORY CRUD
+Route::resource('categories', CategoryController::class);
 
 // METAL TYPES CRUD
 Route::resource('metal-types', MetalTypeController::class);
-
-// CART
-Route::get('/cart', [ProductController::class, 'cart'])->name('cart');
-Route::post('/cart/add/{id}', [ProductController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');

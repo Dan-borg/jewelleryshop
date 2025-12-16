@@ -16,7 +16,7 @@
 </style>
 
 <div class="row">
-    // PRODUCT IMAGE 
+    <!-- PRODUCT IMAGE -->
     <div class="col-md-6 mb-3">
         @if ($product->image)
             <img src="{{ asset('storage/' . $product->image) }}"
@@ -30,7 +30,7 @@
         @endif
     </div>
 
-    // PRODUCT DETAILS
+    <!-- PRODUCT DETAILS -->
     <div class="col-md-6">
         <h2>{{ $product->name }}</h2>
 
@@ -54,7 +54,7 @@
 
         <hr>
 
-        // PERSONALISATION + ADD TO CART
+        <!-- PERSONALISATION + ADD TO CART -->
         <h5 class="mb-3">Personalisation</h5>
 
         <form method="POST" action="{{ route('cart.add', $product->id) }}">
@@ -65,7 +65,7 @@
                     This piece can be engraved to make it uniquely yours.
                 </p>
 
-                {{-- ASK IF USER WANTS ENGRAVING --}}
+                <!-- ASK IF USER WANTS ENGRAVING -->
                 <div class="mb-3">
                     <label class="form-label d-block">Do you want engraving?</label>
 
@@ -89,7 +89,7 @@
                     </div>
                 </div>
 
-                // ENGRAVING FIELDS
+                <!-- ENGRAVING FIELDS -->
                 <div id="engravingFields" style="display:none;">
                     <div class="mb-3">
                         <label class="form-label">Engraving text (max 50 characters)</label>
@@ -112,7 +112,7 @@
                 </div>
 
             @else
-                // PRODUCT IS NOT ENGRAVEABLE
+                <!-- PRODUCT IS NOT ENGRAVEABLE -->
                 <p class="text-muted">This product cannot be engraved.</p>
                 <input type="hidden" name="engrave" value="no">
             @endif
@@ -125,7 +125,7 @@
     </div>
 </div>
 
-// FOR SHOW/HIDE ENGRAVING FIELDS
+<!-- FOR SHOW/HIDE ENGRAVING FIELDS -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const yes = document.getElementById("engrave_yes");

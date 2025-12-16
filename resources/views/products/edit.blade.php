@@ -3,11 +3,22 @@
 @section('content')
 <h2 class="mb-4">Edit Product</h2>
 
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+
 <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
-    {{-- Name --}}
+    <!-- Name -->
     <div class="mb-3">
         <label class="form-label">Name</label>
         <input
@@ -19,7 +30,7 @@
         >
     </div>
 
-    {{-- Description --}}
+    <!-- Description -->
     <div class="mb-3">
         <label class="form-label">Description</label>
         <textarea
@@ -29,7 +40,7 @@
         >{{ old('description', $product->description) }}</textarea>
     </div>
 
-    {{-- Price --}}
+    <!-- Price -->
     <div class="mb-3">
         <label class="form-label">Price (€)</label>
         <input
@@ -42,7 +53,7 @@
         >
     </div>
 
-    {{-- Stock --}}
+    <!-- Stock -->
     <div class="mb-3">
         <label class="form-label">Stock</label>
         <input
@@ -54,7 +65,7 @@
         >
     </div>
 
-    {{-- Category --}}
+    <!-- Category -->
     <div class="mb-3">
         <label class="form-label">Category</label>
         <select name="category_id" class="form-select" required>
@@ -68,7 +79,7 @@
         </select>
     </div>
 
-    {{-- Collection (existing OR create new) --}}
+    <!-- Collection (existing OR create new) -->
     @if (!empty($collections))
     <div class="mb-3">
         <label class="form-label">Collection (optional)</label>
@@ -98,7 +109,7 @@
         >
     </div>
 
-    {{-- Metal Type (existing OR create new) --}}
+    <!-- Metal Type (existing OR create new) -->
     @if (!empty($metalTypes))
     <div class="mb-3">
         <label class="form-label">Metal Type (optional)</label>
@@ -128,7 +139,7 @@
         >
     </div>
 
-    {{-- Engravable toggle --}}
+    <!-- Engravable toggle -->
     <div class="mb-3">
         <label class="form-label">Is this product engravable?</label>
         <select name="is_engraveable" class="form-select">
@@ -140,7 +151,7 @@
         </div>
     </div>
 
-    {{-- Image --}}
+    <!-- Image -->
     <div class="mb-3">
         <label class="form-label">Image</label>
         <input type="file" name="image" class="form-control">

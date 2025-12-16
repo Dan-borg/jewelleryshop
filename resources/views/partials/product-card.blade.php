@@ -1,6 +1,6 @@
 <div class="card h-100 shadow-sm">
 
-    {{-- Image --}}
+    <!-- Image -->
     @if ($product->image)
         <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top"
              style="height: 250px; object-fit: cover;">
